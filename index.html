@@ -123,6 +123,8 @@
             margin-top: 20px;
             transition: all 0.3s ease;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            border: none;
+            cursor: pointer;
         }
         
         .pay-button:hover {
@@ -181,7 +183,7 @@
         
         <div class="payment-section">
             <h2>💎 Premium Course Access</h2>
-            <div class="price">₹500</div>
+            <div class="price">₹1</div>
             
             <div class="features">
                 <ul>
@@ -194,14 +196,13 @@
                 </ul>
             </div>
             
-            <!-- UPI Payment Button -->
-            <a href="upi://pay?pa=mahavir972@axl&pn=Course Payment&am=500&cu=INR&tn=SaaS Course Purchase" 
-               class="pay-button">
-               💳 अभी ₹500 में खरीदें
-            </a>
+            <!-- Razorpay Payment Button -->
+            <button id="rzp-button1" class="pay-button">
+               💳 अभी ₹1 में खरीदें
+            </button>
             
             <p style="color: white; margin-top: 20px; font-size: 0.9em;">
-                ⚡ Instant Access | 🔒 Secure Payment | 📱 UPI Supported
+                ⚡ Instant Access | 🔒 Secure Payment | 💳 All Payment Methods
             </p>
         </div>
         
@@ -220,5 +221,61 @@
             </p>
         </div>
     </div>
+
+    <!-- Razorpay Checkout Script -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+        var options = {
+            "key": "rzp_live_RZK5eYHYO0qFAV", // Your Razorpay Live API Key
+            "amount": "100", // Amount in paise (₹1 = 100 paise)
+            "currency": "INR",
+            "name": "SaaS Course",
+            "description": "AI SaaS Business Video Course",
+            "image": "https://cdn-icons-png.flaticon.com/512/3135/3135715.png", // Optional: Add your logo URL
+            "handler": function (response){
+                // Payment Success Handler
+                alert('Payment Successful!');
+                alert('Payment ID: ' + response.razorpay_payment_id);
+                
+                // You can redirect user to course page or send payment details to your server
+                // window.location.href = "course-access-page.html";
+                
+                // Or send data to your server
+                // fetch('/verify-payment', {
+                //     method: 'POST',
+                //     headers: {'Content-Type': 'application/json'},
+                //     body: JSON.stringify({
+                //         payment_id: response.razorpay_payment_id,
+                //         order_id: response.razorpay_order_id,
+                //         signature: response.razorpay_signature
+                //     })
+                // });
+            },
+            "prefill": {
+                "name": "",
+                "email": "",
+                "contact": ""
+            },
+            "notes": {
+                "address": "SaaS Video Course Purchase"
+            },
+            "theme": {
+                "color": "#f5576c"
+            }
+        };
+        
+        var rzp1 = new Razorpay(options);
+        
+        // Error Handler
+        rzp1.on('payment.failed', function (response){
+            alert('Payment Failed: ' + response.error.description);
+        });
+        
+        // Button Click Event
+        document.getElementById('rzp-button1').onclick = function(e){
+            rzp1.open();
+            e.preventDefault();
+        }
+    </script>
 </body>
 </html>
